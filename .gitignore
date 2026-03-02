@@ -10,3 +10,6 @@ __pycache__/
 
 # Output
 output/
+
+# Reference images
+editing_md.png

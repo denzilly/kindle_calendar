@@ -4,6 +4,7 @@ import logging
 
 from fetcher import fetch_events
 from renderer import render_image
+from weather import fetch_weather
 
 logging.basicConfig(
     level=logging.INFO,
@@ -19,8 +20,12 @@ def run_once():
     output_path = os.path.join(OUTPUT_DIR, "calendar.png")
     log.info("Fetching events…")
     events = fetch_events()
-    log.info("Fetched %d event(s). Rendering…", len(events))
-    render_image(events, output_path)
+    log.info("Fetched %d event(s).", len(events))
+    log.info("Fetching weather…")
+    weather = fetch_weather()
+    log.info("Weather: %s", weather)
+    log.info("Rendering…")
+    render_image(events, weather, output_path)
     log.info("Saved to %s", output_path)
 
 

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, date, timezone, timedelta
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -19,16 +19,26 @@ def fetch_events():
     )
     service = build("calendar", "v3", credentials=creds)
 
-    now = datetime.now(timezone.utc)
-    time_max = now + timedelta(days=7)
+    # 3-week rolling grid: Sunday of current week → Saturday 3 weeks later
+    today = date.today()
+    dow = (today.weekday() + 1) % 7  # Sun=0, Mon=1, …, Sat=6
+    grid_start = today - timedelta(days=dow)
+    grid_end = grid_start + timedelta(days=20)  # 3 full weeks, ends on a Saturday
+
+    time_min = datetime(
+        grid_start.year, grid_start.month, grid_start.day, tzinfo=timezone.utc
+    )
+    time_max = datetime(
+        grid_end.year, grid_end.month, grid_end.day, 23, 59, 59, tzinfo=timezone.utc
+    )
 
     result = (
         service.events()
         .list(
             calendarId=calendar_id,
-            timeMin=now.isoformat(),
+            timeMin=time_min.isoformat(),
             timeMax=time_max.isoformat(),
-            maxResults=10,
+            maxResults=50,
             singleEvents=True,
             orderBy="startTime",
         )
