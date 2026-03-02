@@ -7,6 +7,8 @@ services:
       - OUTPUT_DIR=/output
       - REFRESH_INTERVAL=${REFRESH_INTERVAL:-1800}
       - TZ=${TZ:-Europe/London}
+      - LATITUDE=${LATITUDE}
+      - LONGITUDE=${LONGITUDE}
     volumes:
       - ./credentials:/credentials:ro
       - output:/output
